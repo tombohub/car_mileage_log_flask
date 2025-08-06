@@ -73,7 +73,19 @@ class DriveLog:
     job_site_address: str
 
 
-def select_completed_drive_logs() -> list[DriveLog]:
+@dataclass
+class DriveLogCompleted:
+    id: int
+    date: dt.date
+    start_km: int
+    end_km: int
+    status: str
+    job_site_id: int
+    job_site_name: str
+    job_site_address: str
+
+
+def select_completed_drive_logs() -> list[DriveLogCompleted]:
     stmt = (
         select(
             drive_logs_table.c.id,
@@ -87,13 +99,14 @@ def select_completed_drive_logs() -> list[DriveLog]:
         )
         .join(job_sites_table)
         .where(drive_logs_table.c.status == DriveLogStatus.COMPLETED.value)
+        .order_by(drive_logs_table.c.created_at.desc())
     )
 
     with engine.connect() as conn:
         result = conn.execute(stmt)
 
     drive_logs = [
-        DriveLog(
+        DriveLogCompleted(
             id=row["id"],
             date=row["date"],
             start_km=row["start_km"],
@@ -106,18 +119,6 @@ def select_completed_drive_logs() -> list[DriveLog]:
         for row in result.mappings()
     ]
     return drive_logs
-
-
-@dataclass
-class DriveLogCompleted:
-    id: int
-    date: dt.date
-    start_km: int
-    end_km: int
-    status: str
-    job_site_id: int
-    job_site_name: str
-    job_site_address: str
 
 
 def drive_log_select_earliest_in_progress() -> DriveLogCompleted | None:
