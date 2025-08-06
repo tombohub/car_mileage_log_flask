@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="{{ url_for('drive_logs_new_submit') }}" method="post">
+    <div class="vstack gap-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-floating">
+            <input id="drive-log-date-input" name="drive-log-date" type="date" placeholder="" class="form-control">
+            <label for="drive-log-date-input">Date</label>
+        </div>
+
+        <div class="form-floating">
+            <input id="drive-log-start-km-input" name="drive-log-start-km" type="number" placeholder=""
+                class="form-control">
+            <label for="drive-log-start-km-input">Start km</label>
+        </div>
+
+        <div class="form-floating">
+            <input id="drive-log-end-km-input" name="drive-log-end-km" type="number" placeholder=""
+                class="form-control">
+            <label for="drive-log-end-km-input">End km</label>
+        </div>
+
+        <div class="form-floating">
+            <select name="job-site-id" id="job-site-id-input" class="form-select">
+                {% for job_site in job_sites %}
+                <option value="{{ job_site.id }}">{{ job_site.address }}</option>
+                {% endfor %}
+            </select>
+            <label for="job-site-id-input">Job site</label>
+        </div>
+
+        <button class="btn btn-lg btn-primary w-100">Add</button>
+    </div>
+</form>
+{% endblock content %}new drive log

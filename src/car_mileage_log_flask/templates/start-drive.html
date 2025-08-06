@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="{{ url_for('start_drive') }}" method="post">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="vstack gap-3">
+
+        <div class="form-floating">
+            <input type="date" name="date" id="date" value="{{today_date}}"
+                class="form-control {% if errors and errors['date'] %} is-invalid {% endif %}">
+            <label for="date">Date</label>
+            {% if errors %}
+            <div class="invalid-feedback">{{ errors['date'] }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-floating">
+            <input type="number" name="start_km" id="start_km"
+                class="form-control {% if errors and errors['start_km'] %} is-invalid {% endif %}" placeholder=""
+                value="{{ start_km }}">
+            <label for="start_km">Start km</label>
+            {% if errors %}
+            <div class="invalid-feedback">{{ errors['start_km'] }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-floating">
+            <select name="job_site_id" id="job_site_id" class="form-select">
+                <option value="{{last_job_site.id}}">{{ last_job_site.address }}</option>
+                {% for job_site in job_sites %}
+                <option value="{{job_site.id}}">{{ job_site.address }}</option>
+                {% endfor %}
+            </select>
+            <label for="job_site_id">Job Site</label>
+        </div>
+    </div>
+    <button class="btn btn-lg btn-primary w-100">Start Drive</button>
+</form>
+{% endblock content %}

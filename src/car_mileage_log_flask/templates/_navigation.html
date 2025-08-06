@@ -1,0 +1,8 @@
+<nav>
+    {% if session.get('logged_in') %}
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{url_for('job_sites_index')}}">Job sites</a>
+    <a href="{{url_for('drive_logs_index')}}">Drive logs</a>
+    <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% endif %}
+</nav>

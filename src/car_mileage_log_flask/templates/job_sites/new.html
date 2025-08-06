@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="{{url_for('job_sites_new_submit')}}" method="post">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="vstack gap-3">
+        <div class="form-floating">
+            <input id="job-site-name-input" type="text" name="job-site-name" class="form-control" placeholder="" />
+            <label for="job-site-name-input">Name</label>
+        </div>
+        <div class="form-floating">
+            <input id="job-site-address-input" name="job-site-address" class="form-control" type="text" placeholder="">
+            <label for="job-site-address-input">Address</label>
+        </div>
+
+        <button class="btn btn-primary">Add</button>
+    </div>
+</form>{% endblock content %}

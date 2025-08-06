@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>Drive in progress: <br>
+    date: {{ drive_log.date }} <br>
+    start_km: {{ drive_log.start_km }}km <br>
+    address: {{ drive_log.job_site_address }}
+</div>
+<form action="" method="post" class="mt-4">
+
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <div class="vstack gap-3">
+        <div class="form-floating">
+            <input type="number" name="end_km" id="end-km-input" placeholder=""
+                class="form-control {% if errors and errors['end_km'] %} is-invalid {% endif %}">
+            <label for="end-km-input">End km</label>
+            {% if errors %}
+            <div class="invalid-feedback">{{ errors['end_km'] }}</div>
+            {% endif %}
+        </div>
+        <button class="btn btn-lg btn-primary">End Drive</button>
+    </div>
+</form>
+{% endblock content %}

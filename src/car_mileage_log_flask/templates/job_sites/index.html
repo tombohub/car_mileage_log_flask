@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a class="btn btn-primary w-100" href="{{url_for('job_sites_new')}}">Add Job Site</a>
+
+<div class="vstack gap-3 mt-4">
+    {% for job_site in job_sites %}
+    <div class="hstack align-items-stretch">
+        <div class="card flex-grow-1">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{job_site.name}}
+                </h5>
+                <i class="bi bi-geo-alt">
+                    {{job_site.address}}
+                </i>
+            </div>
+        </div>
+
+        <form action="{{url_for('job_sites_delete', id=job_site.id)}}">
+            <button class="h-100 btn btn-danger"><i class="bi bi-trash"></i></button>
+        </form>
+        <form action="{{url_for('job_sites_edit', id=job_site.id)}}">
+            <button class="h-100 btn btn-primary"><i class="bi bi-pen"></i></button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4 class="text-center">Drive Logs</h4>
+<a class="btn btn-lg btn-primary w-100" href="{{ url_for('drive_logs_new') }}">Add Drive Log</a>
+
+<div class="vstack gap-3 mt-4">
+    {% for drive_log in drive_logs %}
+    <div class="hstack align-items-stretch">
+        <div class="card flex-grow-1">
+            <div class="card-body">
+                <h6 class="card-title">
+                    {{ drive_log.date }}
+                </h6>
+                km: {{ drive_log.start_km }} -> {{ drive_log.end_km }} <br>
+                <i class="bi bi-geo-alt"></i> <a href="{{ url_for('job_sites_details', id=drive_log.job_site_id) }}">{{
+                    drive_log.job_site_address }}</a>
+            </div>
+        </div>
+
+        <form action="{{url_for('drive_logs_delete', id=drive_log.id)}}">
+            <button class="h-100 btn btn-danger"><i class="bi bi-trash"></i></button>
+        </form>
+        <form action="{{url_for('drive_logs_edit', id=drive_log.id)}}">
+            <button class="h-100 btn btn-primary"><i class="bi bi-pen"></i></button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}
