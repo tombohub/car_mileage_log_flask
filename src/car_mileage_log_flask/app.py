@@ -43,15 +43,17 @@ app.register_blueprint(auth_bp)
 @app.get("/")
 @login_required
 def home():
-    drive_in_progress = drive_log_select_earliest_in_progress()
-    if drive_in_progress:
-        return redirect(url_for("end_drive", id=drive_in_progress.id))
     return redirect(url_for("start_drive"))
 
 
 @app.route("/start-drive", methods=["GET", "POST"])
 @login_required
 def start_drive():
+    # first check if there is drive in progress
+    drive_in_progress = drive_log_select_earliest_in_progress()
+    if drive_in_progress:
+        return redirect(url_for("end_drive", id=drive_in_progress.id))
+
     # get data
     today_date = dt.date.today()
     job_sites = select_all_job_sites()
