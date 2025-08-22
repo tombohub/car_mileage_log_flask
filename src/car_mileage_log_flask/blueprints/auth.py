@@ -29,6 +29,7 @@ def login():
         if username == os.getenv("AUTH_USERNAME") and password == os.getenv(
             "AUTH_PASSWORD"
         ):
+            session.permanent = True
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:

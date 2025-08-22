@@ -1,5 +1,6 @@
 import datetime as dt
 import os
+from datetime import timedelta
 from typing import Any
 
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -32,6 +33,7 @@ app = Flask(__name__)
 secret_key = os.getenv("FLASK_SECRET_KEY")
 assert secret_key
 app.secret_key = secret_key
+app.permanent_session_lifetime = timedelta(days=7)
 csrf = CSRFProtect(app)
 
 app.register_blueprint(auth_bp)
