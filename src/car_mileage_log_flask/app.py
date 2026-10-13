@@ -3,8 +3,18 @@ import os
 from datetime import timedelta
 from typing import Any
 
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import (
+    Flask,
+    flash,
+    g,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_wtf.csrf import CSRFProtect
+from pyinstrument import Profiler
 
 from car_mileage_log_flask import commands, queries
 from car_mileage_log_flask.blueprints.auth import auth_bp, login_required
@@ -39,6 +49,25 @@ csrf = CSRFProtect(app)
 app.register_blueprint(auth_bp)
 
 
+# ---------------------------------- SIGNALS --------------------------------- #
+
+
+@app.before_request
+def before_request():
+    if "profile" in request.args:
+        g.profiler = Profiler()
+        g.profiler.start()
+
+
+@app.after_request
+def after_request(response):
+    if not hasattr(g, "profiler"):
+        return response
+    g.profiler.stop()
+    output_html = g.profiler.output_html()
+    return make_response(output_html)
+
+
 # ---- APP ---- #
 
 
@@ -53,6 +82,7 @@ def home():
 def start_drive():
     # first check if there is drive in progress
     drive_in_progress = drive_log_select_earliest_in_progress()
+
     if drive_in_progress:
         return redirect(url_for("end_drive", id=drive_in_progress.id))
 
