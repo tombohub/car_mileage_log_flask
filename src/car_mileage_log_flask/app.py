@@ -38,6 +38,7 @@ from car_mileage_log_flask.db.writes import drive_log_delete as db_drive_log_del
 from car_mileage_log_flask.db.writes import end_drive as db_end_drive
 from car_mileage_log_flask.db.writes import start_drive as db_start_drive
 from car_mileage_log_flask.domain import DriveLogStatus
+from car_mileage_log_flask.blueprints.job_sites import job_site_bp
 
 app = Flask(__name__)
 secret_key = os.getenv("FLASK_SECRET_KEY")
@@ -47,6 +48,7 @@ app.permanent_session_lifetime = timedelta(days=7)
 csrf = CSRFProtect(app)
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(job_site_bp)
 
 
 # ---------------------------------- SIGNALS --------------------------------- #
@@ -178,15 +180,6 @@ def end_drive(id: int):
 # ---- JOB SITES ---- #
 
 
-@app.get("/job-sites")
-@login_required
-def job_sites_index():
-    job_sites = queries.get_all_job_sites()
-
-    context = {"job_sites": job_sites}
-    return render_template("job_sites/index.html", **context)
-
-
 @app.get("/job-sites/new")
 @login_required
 def job_sites_new():
@@ -213,7 +206,7 @@ def job_sites_new_submit():
         flash("Job site added", "success")
     else:
         flash("Jos site not added", "danger")
-    return redirect(url_for("job_sites_index"))
+    return redirect(url_for("job_sites.index"))
 
 
 @app.get("/job-sites/delete/<int:id>")
@@ -232,7 +225,7 @@ def job_sites_delete_confirmed(id: int):
         flash("job site deleted", "success")
     except Exception:
         flash("Cannot delete job site", "danger")
-    return redirect(url_for("job_sites_index"))
+    return redirect(url_for("job_sites.index"))
 
 
 @app.get("/job-sites/edit/<int:id>")
@@ -254,7 +247,7 @@ def job_sites_edit_submit(id: int):
         flash("Job site edited.", "success")
     else:
         flash("Job site not edited", "danger")
-    return redirect(url_for("job_sites_index"))
+    return redirect(url_for("job_sites.index"))
 
 
 # ---- DRIVE LOGS ---- #

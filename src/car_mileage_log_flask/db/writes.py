@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from sqlalchemy import delete, insert, text, update
 
 from car_mileage_log_flask.db.connection import engine
-from car_mileage_log_flask.db.models import DriveLogDrivelog
 from car_mileage_log_flask.db.reads import drive_log_select_last_completed
 from car_mileage_log_flask.db.tables import drive_logs_table, job_sites_table
 from car_mileage_log_flask.domain import DriveLogStatus, JobSite
@@ -43,7 +42,7 @@ class EndDriveInput:
 
 def end_drive(input: EndDriveInput):
     sql = """
-        UPDATE drive_log_drivelog
+        UPDATE drive_logs
         SET end_km = :end_km,
             updated_at = :updated_at,
             status = :status
@@ -118,7 +117,7 @@ def drive_log_insert(
 
 def drive_log_delete(id: int):
     sql = """
-        DELETE FROM drive_log_drivelog
+        DELETE FROM drive_logs
         WHERE id = :id
         """
     with engine.connect() as conn:

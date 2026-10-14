@@ -124,8 +124,8 @@ def select_completed_drive_logs() -> list[DriveLogCompleted]:
 def drive_log_select_earliest_in_progress() -> DriveLogCompleted | None:
     sql = """
             SELECT d.*, j.name AS job_site_name, j.address as job_site_address
-            FROM drive_log_drivelog d
-            JOIN drive_log_jobsite j ON d.job_site_id = j.id
+            FROM drive_logs d
+            JOIN job_sites j ON d.job_site_id = j.id
             WHERE status = 'in_progress'
             ORDER BY created_at ASC
             LIMIT 1;
@@ -152,8 +152,8 @@ def drive_log_select_earliest_in_progress() -> DriveLogCompleted | None:
 def drive_log_select_last_completed() -> DriveLogCompleted | None:
     sql = """
         SELECT d.*, j.name AS job_site_name, j.address as job_site_address
-        FROM drive_log_drivelog d
-        JOIN drive_log_jobsite j ON d.job_site_id = j.id
+        FROM drive_logs d
+        JOIN job_sites j ON d.job_site_id = j.id
         ORDER BY created_at DESC
         LIMIT 1;
         """
@@ -179,8 +179,8 @@ def drive_log_select_last_completed() -> DriveLogCompleted | None:
 def drive_log_select_by_id(id: int) -> DriveLog | None:
     sql = """
         SELECT d.*, j.name AS job_site_name, j.address as job_site_address
-        FROM drive_log_drivelog d
-        JOIN drive_log_jobsite j ON d.job_site_id = j.id
+        FROM drive_logs d
+        JOIN job_sites j ON d.job_site_id = j.id
         WHERE d.id = :id
         LIMIT 1;
         """
@@ -207,7 +207,7 @@ def drive_log_select_by_id(id: int) -> DriveLog | None:
 def drive_logs_select_count_in_progress():
     sql = """
             SELECT count(*)
-            FROM drive_log_drivelog
+            FROM drive_logs
             WHERE status = 'in_progress';
             """
     with engine.connect() as conn:
