@@ -1,0 +1,14 @@
+version: "3"
+
+tasks:
+  dev:
+    cmds:
+      - uv run flask --app car_mileage_log_flask.app run --debug
+
+  reload:
+    cmds:
+      - browser-sync 'http://127.0.0.1:5000' --files .
+
+  gunicorn:
+    cmds:
+      - gunicorn car_mileage_log_flask.app:app
