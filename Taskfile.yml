@@ -12,3 +12,32 @@ tasks:
   gunicorn:
     cmds:
       - gunicorn car_mileage_log_flask.app:app
+
+  dbmate:
+    dotenv:
+      - ./.env
+    cmds:
+      - dbmate {{.CLI_ARGS}}
+  migrate-dev:
+    dotenv:
+      - ./.env
+    cmds:
+      - dbmate up
+
+  # migrate-test:
+  #   dotenv:
+  #     - ./.env.test
+  #   cmds:
+  #     - dbmate --no-dump-schema up
+
+  migrate-prod:
+    dotenv:
+      - ./.env.prod
+    cmds:
+      - dbmate --no-dump-schema up
+
+  migrate:
+    cmds:
+      - task: migrate-dev
+      # - task: migrate-test
+      - task: migrate-prod
