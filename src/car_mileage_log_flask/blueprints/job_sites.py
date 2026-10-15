@@ -22,7 +22,7 @@ class JobSiteForm(FlaskForm):
 @login_required
 def index():
     with Session() as session:
-        stmt = select(JobSite)
+        stmt = select(JobSite).order_by(JobSite.created_at.desc())
         job_sites = session.scalars(stmt).all()
 
     return render_template("job_sites/index.html", job_sites=job_sites)
