@@ -102,3 +102,48 @@ def new():
             return redirect(url_for("drive_logs.index"))
 
     return render_template("drive_logs/new.html", form=form)
+
+
+@drive_logs_bp.route("/<int:id>/edit", methods=["GET", "POST"])
+@login_required
+def edit(id: int):
+    with Session() as session:
+        drive_log = session.get(DriveLog, id)
+
+        if drive_log is None:
+            abort(404)
+
+        form = DriveLogForm(obj=drive_log)
+
+        job_sites = session.scalars(select(JobSite).order_by(JobSite.created_at)).all()
+
+        form.job_site_id.choices = [
+            (site.id, site.name or site.address) for site in job_sites
+        ]
+
+        if form.validate_on_submit():
+            form.populate_obj(drive_log)
+            drive_log.updated_at = datetime.now(UTC)
+
+            session.commit()
+
+            flash("Drive log updated", "success")
+            return redirect(url_for("drive_logs.index"))
+
+        return render_template("drive_logs/edit.html", form=form, drive_log=drive_log)
+
+
+@drive_logs_bp.post("<int:id>/delete")
+@login_required
+def delete(id: int):
+    with Session() as session:
+        drive_log = session.get(DriveLog, id)
+
+        if drive_log is None:
+            abort(404)
+
+        session.delete(drive_log)
+        session.commit()
+
+    flash("Drive log deleted.", "success")
+    return redirect(url_for("drive_logs.index"))

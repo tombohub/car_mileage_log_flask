@@ -226,9 +226,3 @@ def drive_logs_delete_confirmed(id: int):
         flash("Drive log cannot be deleted", "danger")
 
     return redirect(url_for("drive_logs.index"))
-
-
-@app.get("/drive-logs/edit/<int:id>")
-@login_required
-def drive_logs_edit(id: int):
-    return render_template("drive_logs/edit.html")

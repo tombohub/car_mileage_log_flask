@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_field %}
 
 {% block content %}
-edit not implemented
+<form action="{{ url_for('drive_logs.edit', id=drive_log.id) }}" method="post">
+    {{ form.hidden_tag() }}
+
+    {{ render_field(form.date) }}
+    {{ render_field(form.start_km) }}
+    {{ render_field(form.end_km) }}
+    {{ render_field(form.status) }}
+    {{ render_field(form.job_site_id) }}
+
+    <button type="submit" class="btn btn-primary w-100">
+        Save changes
+    </button>
+</form>
 {% endblock content %}

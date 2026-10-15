@@ -2,7 +2,7 @@
 
 {% block content %}
 <h4 class="text-center">Drive Logs</h4>
-<a class="btn btn-lg btn-primary w-100" href="{{ url_for('drive_logs_new') }}">Add Drive Log</a>
+<a class="btn btn-lg btn-primary w-100" href="{{ url_for('drive_logs.new') }}">Add Drive Log</a>
 
 <div class="vstack gap-3 mt-4">
     {% for drive_log in drive_logs %}
@@ -18,10 +18,15 @@
             </div>
         </div>
 
-        <form action="{{url_for('drive_logs_delete', id=drive_log.id)}}">
-            <button class="h-100 btn btn-danger"><i class="bi bi-trash"></i></button>
+        <form action="{{ url_for('drive_logs.delete', id=drive_log.id) }}"
+              method="post"
+              onsubmit="return confirm('Delete this drive log?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="h-100 btn btn-danger" aria-label="Delete drive log">
+                <i class="bi bi-trash" aria-hidden="true"></i>
+            </button>
         </form>
-        <form action="{{url_for('drive_logs_edit', id=drive_log.id)}}">
+        <form action="{{url_for('drive_logs.edit', id=drive_log.id)}}">
             <button class="h-100 btn btn-primary"><i class="bi bi-pen"></i></button>
         </form>
     </div>
