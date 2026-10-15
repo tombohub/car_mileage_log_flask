@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="text-center text-bg-danger">Do not add. Use start drive end drive!</h1>
 <h4 class="text-center">Drive Logs</h4>
 <a class="btn btn-lg btn-primary w-100" href="{{ url_for('drive_logs_new') }}">Add Drive Log</a>
 
@@ -14,7 +13,7 @@
                     {{ drive_log.date }}
                 </h6>
                 km: {{ drive_log.start_km }} -> {{ drive_log.end_km }} <br>
-                <i class="bi bi-geo-alt"></i> <a href="{{ url_for('job_sites_details', id=drive_log.job_site_id) }}">{{
+                <i class="bi bi-geo-alt"></i> <a href="{{ url_for('job_sites.details', id=drive_log.job_site_id) }}">{{
                     drive_log.job_site_address }}</a>
             </div>
         </div>

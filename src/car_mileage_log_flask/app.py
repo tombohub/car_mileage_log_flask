@@ -17,8 +17,8 @@ from flask_bootstrap import Bootstrap5
 from flask_wtf.csrf import CSRFProtect
 from pyinstrument import Profiler
 
-from car_mileage_log_flask import commands, queries
 from car_mileage_log_flask.blueprints.auth import auth_bp, login_required
+from car_mileage_log_flask.blueprints.drive_logs import drive_logs_bp
 from car_mileage_log_flask.blueprints.job_sites import job_site_bp
 from car_mileage_log_flask.db.reads import (
     drive_log_select_by_id,
@@ -27,13 +27,10 @@ from car_mileage_log_flask.db.reads import (
     drive_logs_select_count_in_progress,
     job_site_select_most_recent,
     select_all_job_sites,
-    select_completed_drive_logs,
-    select_job_site_by_id,
 )
 from car_mileage_log_flask.db.writes import (
     EndDriveInput,
     StartDriveInput,
-    delete_job_site,
     drive_log_insert,
 )
 from car_mileage_log_flask.db.writes import drive_log_delete as db_drive_log_delete
@@ -51,6 +48,7 @@ bootstrap = Bootstrap5(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(job_site_bp)
+app.register_blueprint(drive_logs_bp)
 
 
 # ---------------------------------- SIGNALS --------------------------------- #
@@ -182,22 +180,6 @@ def end_drive(id: int):
 # ---- DRIVE LOGS ---- #
 
 
-@app.get("/drive-logs")
-@login_required
-def drive_logs_index():
-    drive_logs = select_completed_drive_logs()
-    context = {"drive_logs": drive_logs}
-    return render_template("drive_logs/index.html", **context)
-
-
-@app.get("/drive-logs/new")
-@login_required
-def drive_logs_new():
-    job_sites = select_all_job_sites()
-    context = {"drive_log_statuses": DriveLogStatus, "job_sites": job_sites}
-    return render_template("drive_logs/new.html", **context)
-
-
 @app.post("/drive-logs/new")
 @login_required
 def drive_logs_new_submit():
@@ -219,7 +201,7 @@ def drive_logs_new_submit():
         status=DriveLogStatus.COMPLETED.value,
         job_site_id=job_site_id,
     )
-    return redirect(url_for("drive_logs_index"))
+    return redirect(url_for("drive_logs.index"))
 
 
 @app.get("/drive-logs/delete/<int:id>")
@@ -228,7 +210,7 @@ def drive_logs_delete(id: int):
     drive_log = drive_log_select_by_id(id=id)
     if drive_log is None:
         flash("Drive log doesn't exist", "warning")
-        return redirect(url_for("drive_logs_index"))
+        return redirect(url_for("drive_logs.index"))
 
     context = {"drive_log": drive_log}
     return render_template("drive_logs/delete.html", **context)
@@ -243,7 +225,7 @@ def drive_logs_delete_confirmed(id: int):
     except Exception:
         flash("Drive log cannot be deleted", "danger")
 
-    return redirect(url_for("drive_logs_index"))
+    return redirect(url_for("drive_logs.index"))
 
 
 @app.get("/drive-logs/edit/<int:id>")

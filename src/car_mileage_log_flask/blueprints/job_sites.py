@@ -28,13 +28,25 @@ def index():
     return render_template("job_sites/index.html", job_sites=job_sites)
 
 
+@job_site_bp.get("/<int:id>")
+@login_required
+def details(id: int):
+    with Session() as session:
+        job_site = session.get(JobSite, id)
+
+        if job_site is None:
+            abort(404)
+
+        return render_template("job_sites/details.html", job_site=job_site)
+
+
 @job_site_bp.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
     form = JobSiteForm()
 
     if form.validate_on_submit():
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         job_site = JobSite(
             name=form.name.data,
@@ -52,18 +64,6 @@ def new():
         return redirect(url_for("job_sites.index"))
 
     return render_template("job_sites/new.html", form=form)
-
-
-@job_site_bp.get("/<int:id>")
-@login_required
-def details(id: int):
-    with Session() as session:
-        job_site = session.get(JobSite, id)
-
-        if job_site is None:
-            abort(404)
-
-        return render_template("job_sites/details.html", job_site=job_site)
 
 
 @job_site_bp.route("<int:id>/edit", methods=["GET", "POST"])

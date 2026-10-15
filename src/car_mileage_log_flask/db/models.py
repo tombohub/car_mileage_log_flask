@@ -43,7 +43,7 @@ class DriveLog(Base):
     updated_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True))
     date: Mapped[dt.date] = mapped_column(Date)
     start_km: Mapped[int] = mapped_column(Integer)
-    end_km: Mapped[Optional[int]] = mapped_column(Integer)
+    end_km: Mapped[int | None] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(20))
 
     job_site_id: Mapped[int] = mapped_column(
