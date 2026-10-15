@@ -30,10 +30,24 @@ wheels = [
 ]
 
 [[package]]
+name = "bootstrap-flask"
+version = "2.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask" },
+    { name = "wtforms" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/86/bea605321c923d9b65f33434c97adaf8e39b6a76e7af081ed638f2ecf072/bootstrap_flask-2.6.0.tar.gz", hash = "sha256:2b0849f77a743e117716a75406b0312f0783658589519b0e922054bfb3102b9f", size = 4572152, upload-time = "2026-08-23T11:17:06.298Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1c/12/627718708a73fcc4ce713651aaad4dd91eb92e4e47b5abaea0848e4778cf/bootstrap_flask-2.6.0-py3-none-any.whl", hash = "sha256:2a0ff1df295b143020743949419c955de23ffc3465518f4bf5bac32f90deaa52", size = 4673646, upload-time = "2026-08-23T11:17:04.367Z" },
+]
+
+[[package]]
 name = "car-mileage-log-flask"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "bootstrap-flask" },
     { name = "flask" },
     { name = "flask-wtf" },
     { name = "gunicorn" },
@@ -54,6 +68,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "bootstrap-flask", specifier = ">=2.6.0" },
     { name = "flask", specifier = ">=3.1.1" },
     { name = "flask-wtf", specifier = ">=1.2.2" },
     { name = "gunicorn", specifier = ">=23.0.0" },

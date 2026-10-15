@@ -2,28 +2,34 @@
 
 {% block content %}
 
-<a class="btn btn-primary w-100" href="{{url_for('job_sites_new')}}">Add Job Site</a>
+<a class="btn btn-primary w-100" href="{{url_for('job_sites.new')}}">Add Job Site</a>
 
 <div class="vstack gap-3 mt-4">
     {% for job_site in job_sites %}
-    <div class="hstack align-items-stretch">
-        <div class="card flex-grow-1">
-            <div class="card-body">
-                <h5 class="card-title">
+    <div class="card">
+        <div class="card-body">
+            <p>
+                <span class="text-muted text-info-emphasis">Name:</span> <br>
+                <a href="{{ url_for('job_sites.details', id=job_site.id) }}">
                     {{job_site.name}}
-                </h5>
-                <i class="bi bi-geo-alt">
-                    {{job_site.address}}
-                </i>
-            </div>
+                </a>
+            </p>
+            <p>
+                <span class="text-muted text-info-emphasis">Address:</span> <br>
+                {{job_site.address}}
+            </p>
         </div>
-
-        <form action="{{url_for('job_sites_delete', id=job_site.id)}}">
-            <button class="h-100 btn btn-danger"><i class="bi bi-trash"></i></button>
-        </form>
-        <form action="{{url_for('job_sites_edit', id=job_site.id)}}">
-            <button class="h-100 btn btn-primary"><i class="bi bi-pen"></i></button>
-        </form>
+        <div class="card-footer d-flex">
+            <form action="{{ url_for('job_sites.delete', id=job_site.id) }}" method="post"
+                onsubmit="return confirm('Delete this job site?')" class="w-50">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-danger w-100"><i class="bi bi-trash fs-3"></i></button>
+            </form>
+            <a href="{{ url_for('job_sites.edit', id=job_site.id) }}" class="btn btn-info w-50"
+                aria-label="Edit {{ job_site.name }}">
+                <i class="bi bi-pen fs-3" aria-hidden="true"></i>
+            </a>
+        </div>
     </div>
     {% endfor %}
 </div>

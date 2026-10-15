@@ -3,7 +3,12 @@
 {% block content %}
 <div class="card">
     <div class="card-body">
-        <h6 class="card-title">{{ job_site.address }}</h6>
+        <h5 class="card-title">{{ job_site.name }}</h5>
+        <p class="card-text">{{ job_site.address }}</p>
+
+        <a href="{{ url_for('job_sites.edit', id=job_site.id) }}" class="btn btn-primary">Edit</a>
+
+        <a href="{{ url_for('job_sites.index') }}" class="btn btn-secondary">Back</a>
     </div>
 </div>
 {% endblock content %}

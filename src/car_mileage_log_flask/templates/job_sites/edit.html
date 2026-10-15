@@ -1,22 +1,15 @@
 {% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_field %}
 
 {% block content %}
-<form action="{{url_for('job_sites_edit_submit', id=job_site.id)}}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+<form action="{{ url_for('job_sites.edit', id=job_site.id) }}" method="post">
+    {{ form.hidden_tag() }}
 
-    <div class="vstack gap-3">
-        <div class="form-floating">
-            <input id="job-site-name-input" type="text" name="job-site-name" class="form-control" placeholder=""
-                value="{{ job_site.name }}" />
-            <label for="job-site-name-input">Name</label>
-        </div>
-        <div class="form-floating">
-            <input id="job-site-address-input" name="job-site-address" class="form-control" type="text" placeholder=""
-                value="{{ job_site.address }}">
-            <label for="job-site-address-input">Address</label>
-        </div>
+    {{ render_field(form.name) }}
+    {{ render_field(form.address) }}
 
-        <button class="btn btn-primary">Add</button>
-    </div>
+    <button type="submit" class="btn btn-primary w-100">
+        Save changes
+    </button>
 </form>
 {% endblock content %}

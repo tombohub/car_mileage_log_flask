@@ -13,11 +13,13 @@ from flask import (
     request,
     url_for,
 )
+from flask_bootstrap import Bootstrap5
 from flask_wtf.csrf import CSRFProtect
 from pyinstrument import Profiler
 
 from car_mileage_log_flask import commands, queries
 from car_mileage_log_flask.blueprints.auth import auth_bp, login_required
+from car_mileage_log_flask.blueprints.job_sites import job_site_bp
 from car_mileage_log_flask.db.reads import (
     drive_log_select_by_id,
     drive_log_select_earliest_in_progress,
@@ -38,7 +40,6 @@ from car_mileage_log_flask.db.writes import drive_log_delete as db_drive_log_del
 from car_mileage_log_flask.db.writes import end_drive as db_end_drive
 from car_mileage_log_flask.db.writes import start_drive as db_start_drive
 from car_mileage_log_flask.domain import DriveLogStatus
-from car_mileage_log_flask.blueprints.job_sites import job_site_bp
 
 app = Flask(__name__)
 secret_key = os.getenv("FLASK_SECRET_KEY")
@@ -46,6 +47,7 @@ assert secret_key
 app.secret_key = secret_key
 app.permanent_session_lifetime = timedelta(days=7)
 csrf = CSRFProtect(app)
+bootstrap = Bootstrap5(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(job_site_bp)
@@ -175,79 +177,6 @@ def end_drive(id: int):
             context["end_km"] = raw_end_km
     # when request method is GET
     return render_template("end_drive.html", **context)
-
-
-# ---- JOB SITES ---- #
-
-
-@app.get("/job-sites/new")
-@login_required
-def job_sites_new():
-    return render_template("job_sites/new.html")
-
-
-@app.get("/job-sites/details/<int:id>")
-@login_required
-def job_sites_details(id: int):
-    job_site = select_job_site_by_id(id=id)
-    context = {"job_site": job_site}
-    return render_template("job_sites/details.html", **context)
-
-
-@app.post("/job-sites/new")
-@login_required
-def job_sites_new_submit():
-    name = request.form.get("job-site-name")
-    address = request.form.get("job-site-address")
-    print(request.form)
-    if name and address:
-        input = commands.CreateJobSiteInput(name=name, address=address)
-        commands.create_job_site_command(input=input)
-        flash("Job site added", "success")
-    else:
-        flash("Jos site not added", "danger")
-    return redirect(url_for("job_sites.index"))
-
-
-@app.get("/job-sites/delete/<int:id>")
-@login_required
-def job_sites_delete(id: int):
-    job_site = select_job_site_by_id(id=id)
-    context = {"job_site": job_site}
-    return render_template("job_sites/confirm_delete.html", **context)
-
-
-@app.post("/job-sites/delete/<int:id>")
-@login_required
-def job_sites_delete_confirmed(id: int):
-    try:
-        delete_job_site(id=id)
-        flash("job site deleted", "success")
-    except Exception:
-        flash("Cannot delete job site", "danger")
-    return redirect(url_for("job_sites.index"))
-
-
-@app.get("/job-sites/edit/<int:id>")
-@login_required
-def job_sites_edit(id: int):
-    job_site = select_job_site_by_id(id=id)
-    context = {"job_site": job_site}
-    return render_template("job_sites/edit.html", **context)
-
-
-@app.post("/job-sites/edit/<int:id>")
-@login_required
-def job_sites_edit_submit(id: int):
-    name = request.form.get("job-site-name")
-    address = request.form.get("job-site-address")
-    if name and address:
-        input = commands.EditJobSiteInput(id=id, name=name, address=address)
-        commands.edit_job_site_command(input=input)
-        flash("Job site edited.", "success")
-    else:
-        flash("Job site not edited", "danger")
-    return redirect(url_for("job_sites.index"))
 
 
 # ---- DRIVE LOGS ---- #
