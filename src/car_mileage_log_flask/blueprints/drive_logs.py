@@ -77,9 +77,7 @@ def new():
             select(JobSite).order_by(JobSite.address, JobSite.id)
         ).all()
 
-        form.job_site_id.choices = [
-            (site.id, site.name or site.address) for site in job_sites
-        ]
+        form.job_site_id.choices = [(site.id, site.address) for site in job_sites]
 
         if form.validate_on_submit():
             now = datetime.now(UTC)
