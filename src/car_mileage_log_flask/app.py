@@ -89,7 +89,6 @@ def start_drive():
         return redirect(url_for("end_drive", id=drive_in_progress.id))
 
     # get data
-    today_date = dt.date.today()
     job_sites = select_all_job_sites()
     last_job_site = job_site_select_most_recent()
     previous_drive_log = drive_log_select_last_completed()
@@ -98,22 +97,26 @@ def start_drive():
     context = {
         "last_job_site": last_job_site,
         "job_sites": job_sites,
-        "today_date": today_date,
+        "started_at": "",
         "previous_drive_log": previous_drive_log,
     }
 
     if request.method == "POST":
         # FORM DATA
-        raw_date = request.form["date"]
+        raw_started_at = request.form.get("started_at", "")
         raw_start_km = request.form["start_km"]
         raw_job_site_id = request.form["job_site_id"]
 
-        date = dt.datetime.strptime(raw_date, "%Y-%m-%d")
         start_km = int(raw_start_km)
         job_site_id = int(raw_job_site_id)
 
         # VALIDATION
         errors = {}
+
+        try:
+            started_at = dt.datetime.strptime(raw_started_at, "%Y-%m-%dT%H:%M")
+        except ValueError:
+            errors["started_at"] = "Enter a valid start date and time."
 
         # start_km must not be lower than previous end_km
         if previous_drive_log and start_km < previous_drive_log.end_km:
@@ -123,14 +126,14 @@ def start_drive():
 
         if not errors:
             input = StartDriveInput(
-                date=date, start_km=start_km, job_site_id=job_site_id
+                started_at=started_at, start_km=start_km, job_site_id=job_site_id
             )
             db_start_drive(input=input)
             flash("Drive started", "success")
             return redirect(url_for("home"))
         else:
             context["errors"] = errors
-            context["date"] = raw_date
+            context["started_at"] = raw_started_at
             context["start_km"] = raw_start_km
             context["job_site_id"] = raw_job_site_id
 

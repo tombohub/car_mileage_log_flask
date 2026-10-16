@@ -1,9 +1,14 @@
-from datetime import UTC, date, datetime
+from datetime import UTC, datetime
 
 from flask import Blueprint, abort, flash, redirect, render_template, url_for
 from flask_wtf import FlaskForm
 from sqlalchemy import select
-from wtforms import DateField, IntegerField, SelectField, ValidationError
+from wtforms import (
+    DateTimeLocalField,
+    IntegerField,
+    SelectField,
+    ValidationError,
+)
 from wtforms.validators import (
     DataRequired,
     InputRequired,
@@ -19,7 +24,11 @@ drive_logs_bp = Blueprint("drive_logs", __name__, url_prefix="/drive-logs")
 
 
 class DriveLogForm(FlaskForm):
-    date = DateField("Date", default=date.today, validators=[InputRequired()])
+    started_at = DateTimeLocalField(
+        "Started at",
+        format="%Y-%m-%dT%H:%M",
+        validators=[InputRequired()],
+    )
     start_km = IntegerField(
         "Starting km odometer", validators=[InputRequired(), NumberRange(min=0)]
     )
@@ -49,7 +58,9 @@ class DriveLogForm(FlaskForm):
 @login_required
 def index():
     with Session() as session:
-        stmt = select(DriveLog).order_by(DriveLog.created_at.desc())
+        stmt = select(DriveLog).order_by(
+            DriveLog.started_at.desc(), DriveLog.id.desc()
+        )
         drive_logs = session.scalars(stmt).all()
 
     return render_template("/drive_logs/index.html", drive_logs=drive_logs)
@@ -83,7 +94,7 @@ def new():
             now = datetime.now(UTC)
 
             drive_log = DriveLog(
-                date=form.date.data,
+                started_at=form.started_at.data,
                 start_km=form.start_km.data,
                 end_km=form.end_km.data,
                 status=form.status.data,

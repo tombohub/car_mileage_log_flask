@@ -4,7 +4,7 @@
 <div class="card shadow-sm">
     <div class="card-body text-center">
         <h5 class="card-title text-danger mb-3">Confirm Delete</h5>
-        <strong>{{drive_log.date}}</strong> <br>
+        <strong>{{drive_log.started_at.strftime('%Y-%m-%d %H:%M')}}</strong> <br>
         <i class="bi bi-geo-alt"></i>{{drive_log.job_site_address}}
 
 

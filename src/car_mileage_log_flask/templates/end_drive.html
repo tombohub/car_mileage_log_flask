@@ -2,7 +2,7 @@
 
 {% block content %}
 <div>Drive in progress: <br>
-    date: {{ drive_log.date }} <br>
+    Started at: {{ drive_log.started_at.strftime('%Y-%m-%d %H:%M') }} <br>
     start_km: {{ drive_log.start_km }}km <br>
     address: {{ drive_log.job_site_address }}
 </div>

@@ -7,11 +7,12 @@
     <div class="vstack gap-3">
 
         <div class="form-floating">
-            <input type="date" name="date" id="date" value="{{today_date}}"
-                class="form-control {% if errors and errors['date'] %} is-invalid {% endif %}">
-            <label for="date">Date</label>
+            <input type="datetime-local" name="started_at" id="started_at"
+                value="{{ started_at }}" required
+                class="form-control {% if errors and errors['started_at'] %} is-invalid {% endif %}">
+            <label for="started_at">Started at</label>
             {% if errors %}
-            <div class="invalid-feedback">{{ errors['date'] }}</div>
+            <div class="invalid-feedback">{{ errors['started_at'] }}</div>
             {% endif %}
         </div>
 

@@ -39,7 +39,7 @@ def job_site_select_most_recent() -> JobSite | None:
             job_sites_table.c.name.label("job_site_name"),
         )
         .join(job_sites_table)
-        .order_by(desc(drive_logs_table.c.created_at))
+        .order_by(desc(drive_logs_table.c.started_at), desc(drive_logs_table.c.id))
         .limit(bindparam("limit"))
     )
 
@@ -64,7 +64,7 @@ def job_site_select_most_recent() -> JobSite | None:
 @dataclass
 class DriveLog:
     id: int
-    date: dt.date
+    started_at: dt.datetime
     start_km: int
     end_km: int | None
     status: str
@@ -76,7 +76,7 @@ class DriveLog:
 @dataclass
 class DriveLogCompleted:
     id: int
-    date: dt.date
+    started_at: dt.datetime
     start_km: int
     end_km: int
     status: str
@@ -89,7 +89,7 @@ def select_completed_drive_logs() -> list[DriveLogCompleted]:
     stmt = (
         select(
             drive_logs_table.c.id,
-            drive_logs_table.c.date,
+            drive_logs_table.c.started_at,
             drive_logs_table.c.start_km,
             drive_logs_table.c.end_km,
             drive_logs_table.c.status,
@@ -99,7 +99,7 @@ def select_completed_drive_logs() -> list[DriveLogCompleted]:
         )
         .join(job_sites_table)
         .where(drive_logs_table.c.status == DriveLogStatus.COMPLETED.value)
-        .order_by(drive_logs_table.c.created_at.desc())
+        .order_by(drive_logs_table.c.started_at.desc(), drive_logs_table.c.id.desc())
     )
 
     with engine.connect() as conn:
@@ -108,7 +108,7 @@ def select_completed_drive_logs() -> list[DriveLogCompleted]:
     drive_logs = [
         DriveLogCompleted(
             id=row["id"],
-            date=row["date"],
+            started_at=row["started_at"],
             start_km=row["start_km"],
             end_km=row["end_km"],
             status=row["status"],
@@ -127,7 +127,7 @@ def drive_log_select_earliest_in_progress() -> DriveLogCompleted | None:
             FROM drive_logs d
             JOIN job_sites j ON d.job_site_id = j.id
             WHERE status = 'in_progress'
-            ORDER BY created_at ASC
+            ORDER BY d.started_at ASC, d.id ASC
             LIMIT 1;
         """
     with engine.connect() as conn:
@@ -139,7 +139,7 @@ def drive_log_select_earliest_in_progress() -> DriveLogCompleted | None:
 
     return DriveLogCompleted(
         id=row["id"],
-        date=row["date"],
+        started_at=row["started_at"],
         start_km=row["start_km"],
         end_km=row["end_km"],
         status=row["status"],
@@ -154,7 +154,8 @@ def drive_log_select_last_completed() -> DriveLogCompleted | None:
         SELECT d.*, j.name AS job_site_name, j.address as job_site_address
         FROM drive_logs d
         JOIN job_sites j ON d.job_site_id = j.id
-        ORDER BY created_at DESC
+        WHERE d.status = 'completed' AND d.end_km IS NOT NULL
+        ORDER BY d.started_at DESC, d.id DESC
         LIMIT 1;
         """
     with engine.connect() as conn:
@@ -166,7 +167,7 @@ def drive_log_select_last_completed() -> DriveLogCompleted | None:
 
     return DriveLogCompleted(
         id=row["id"],
-        date=row["date"],
+        started_at=row["started_at"],
         start_km=row["start_km"],
         end_km=row["end_km"],
         status=row["status"],
@@ -194,7 +195,7 @@ def drive_log_select_by_id(id: int) -> DriveLog | None:
 
     return DriveLog(
         id=row["id"],
-        date=row["date"],
+        started_at=row["started_at"],
         start_km=row["start_km"],
         end_km=row["end_km"],
         status=row["status"],

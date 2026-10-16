@@ -14,7 +14,7 @@ from car_mileage_log_flask.domain import DriveLogStatus, JobSite
 
 @dataclass
 class StartDriveInput:
-    date: dt.date
+    started_at: dt.datetime
     start_km: int
     job_site_id: int
 
@@ -22,7 +22,7 @@ class StartDriveInput:
 def start_drive(input: StartDriveInput):
     now = dt.datetime.now(timezone.utc)
     stmt = insert(drive_logs_table).values(
-        date=input.date,
+        started_at=input.started_at,
         start_km=input.start_km,
         job_site_id=input.job_site_id,
         status=DriveLogStatus.IN_PROGRESS.value,
@@ -98,13 +98,13 @@ def update_job_site(job_site: JobSite):
 
 
 def drive_log_insert(
-    date: dt.date, start_km: int, end_km: int, status: str, job_site_id: int
+    started_at: dt.datetime, start_km: int, end_km: int, status: str, job_site_id: int
 ):
     now = datetime.now(timezone.utc)
     stmt = insert(drive_logs_table).values(
         created_at=now,
         updated_at=now,
-        date=date,
+        started_at=started_at,
         start_km=start_km,
         end_km=end_km,
         status=status,

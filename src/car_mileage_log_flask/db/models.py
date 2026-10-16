@@ -3,7 +3,6 @@ from typing import Optional
 
 from sqlalchemy import (
     BigInteger,
-    Date,
     DateTime,
     ForeignKey,
     Identity,
@@ -41,7 +40,7 @@ class DriveLog(Base):
     )
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True))
-    date: Mapped[dt.date] = mapped_column(Date)
+    started_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=False))
     start_km: Mapped[int] = mapped_column(Integer)
     end_km: Mapped[int | None] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(20))
