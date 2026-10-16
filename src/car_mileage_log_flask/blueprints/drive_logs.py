@@ -75,6 +75,24 @@ class DriveLogForm(FlaskForm):
         ):
             raise ValidationError("Ending km must not be lower than starting km")
 
+    def validate_status(self, field):
+        if field.data != "in_progress":
+            return
+
+        stmt = select(DriveLog.id).where(DriveLog.status == "in_progress").limit(1)
+
+        # when we editing current in progress drive we must exclude it from validation otherwise it will always raise error since it thinks there is another drive in progress
+        if self.current_drive_log is not None:
+            stmt = stmt.where(DriveLog.id != self.current_drive_log.id)
+
+        with Session() as session:
+            existing_id = session.scalar(stmt)
+
+            if existing_id is not None:
+                raise ValidationError(
+                    "Another drive is already in progress. Complete it first."
+                )
+
 
 @drive_logs_bp.get("/")
 @login_required
