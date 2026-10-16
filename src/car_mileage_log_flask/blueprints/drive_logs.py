@@ -3,11 +3,10 @@ from datetime import UTC, date, datetime
 from flask import Blueprint, abort, flash, redirect, render_template, url_for
 from flask_wtf import FlaskForm
 from sqlalchemy import select
-from wtforms import DateField, IntegerField, SelectField, StringField, ValidationError
+from wtforms import DateField, IntegerField, SelectField, ValidationError
 from wtforms.validators import (
     DataRequired,
     InputRequired,
-    Length,
     NumberRange,
     Optional,
 )
@@ -68,7 +67,7 @@ def details(id: int):
     return render_template("drive_logs/details.html", drive_log=drive_log)
 
 
-@drive_logs_bp.route("/new")
+@drive_logs_bp.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
     form = DriveLogForm()
