@@ -9,6 +9,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -31,7 +32,10 @@ class JobSite(Base):
 
 class DriveLog(Base):
     __tablename__ = "drive_logs"
-    __table_args__ = (Index("drive_log_drivelog_job_site_id_41254f97", "job_site_id"),)
+    __table_args__ = (
+        Index("drive_log_drivelog_job_site_id_41254f97", "job_site_id"),
+        UniqueConstraint("started_at", name="drive_logs_started_at_unique"),
+    )
 
     id: Mapped[int] = mapped_column(
         BigInteger,

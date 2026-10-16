@@ -102,6 +102,14 @@ ALTER TABLE ONLY public.job_sites
 
 
 --
+-- Name: drive_logs drive_logs_started_at_unique; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.drive_logs
+    ADD CONSTRAINT drive_logs_started_at_unique UNIQUE (started_at);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -137,4 +145,5 @@ ALTER TABLE ONLY public.drive_logs
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20261014010022'),
-    ('20261016011610');
+    ('20261016011610'),
+    ('20261016195132');

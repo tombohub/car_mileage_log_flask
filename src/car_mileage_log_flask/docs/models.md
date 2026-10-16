@@ -7,7 +7,7 @@
 # DriveLog
 
 ## Fields
-- date: date required
+- started_at: datetime required unique
 - start_km: integer required
 - end_km: integer optional
 - job_site: JobSite required
