@@ -45,6 +45,28 @@ class DriveLogForm(FlaskForm):
     )
     job_site_id = SelectField("Job site", coerce=int, validators=[InputRequired()])
 
+    def __init__(self, *args, obj: DriveLog | None = None, **kwargs):
+        super().__init__(*args, obj=obj, **kwargs)
+        self.current_drive_log = obj
+
+    def validate_start_km(self, field):
+        stmt = (
+            select(DriveLog.end_km)
+            .where(
+                DriveLog.status == "completed",
+                DriveLog.end_km.is_not(None),
+                DriveLog.started_at < self.started_at.data,
+            )
+            .order_by(DriveLog.started_at.desc())
+            .limit(1)
+        )
+
+        with Session() as session:
+            previous_end_km = session.scalar(stmt)
+
+        if field.data < previous_end_km:
+            raise ValidationError(f"Starting km must be at least {previous_end_km}.")
+
     def validate_end_km(self, field):
         if (
             field.data is not None
@@ -58,9 +80,7 @@ class DriveLogForm(FlaskForm):
 @login_required
 def index():
     with Session() as session:
-        stmt = select(DriveLog).order_by(
-            DriveLog.started_at.desc(), DriveLog.id.desc()
-        )
+        stmt = select(DriveLog).order_by(DriveLog.started_at.desc(), DriveLog.id.desc())
         drive_logs = session.scalars(stmt).all()
 
     return render_template("/drive_logs/index.html", drive_logs=drive_logs)
