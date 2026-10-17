@@ -21,3 +21,5 @@
 - only one drive log may be in_progress at a time
 - completed drive logs should have end_km
 - in_progress drive logs may have no end_km
+- New drive logs must start strictly after the latest existing drive log.
+- Backdated insertion between existing drive logs is not allowed.
