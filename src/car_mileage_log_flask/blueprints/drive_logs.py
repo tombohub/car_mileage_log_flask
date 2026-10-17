@@ -64,7 +64,8 @@ class DriveLogForm(FlaskForm):
         with Session() as session:
             previous_end_km = session.scalar(stmt)
 
-        if field.data < previous_end_km:
+        # check only if there is previous drive log as in, this is not first drive log.
+        if previous_end_km is not None and field.data < previous_end_km:
             raise ValidationError(f"Starting km must be at least {previous_end_km}.")
 
     def validate_end_km(self, field):
@@ -91,6 +92,25 @@ class DriveLogForm(FlaskForm):
             if existing_id is not None:
                 raise ValidationError(
                     "Another drive is already in progress. Complete it first."
+                )
+
+    def validate_started_at(self, field):
+        if field.data is None:
+            return
+
+        stmt = select(DriveLog.id).where(DriveLog.started_at == field.data).limit(1)
+
+        # if editing existing drive log we need to exclude it from validation otherwise it will check started_at against itself and raise error
+        if self.current_drive_log is not None:
+            stmt = stmt.where(DriveLog.id != self.current_drive_log.id)
+
+        with Session() as session:
+            existing_id = session.scalar(stmt)
+
+            if existing_id is not None:
+                raise ValidationError(
+                    "A drive already starts at this date and time. "
+                    "Choose a different start time."
                 )
 
 
