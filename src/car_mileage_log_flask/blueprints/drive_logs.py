@@ -35,14 +35,6 @@ class DriveLogForm(FlaskForm):
     end_km = IntegerField(
         "Ending km odometer", validators=[Optional(), NumberRange(min=0)]
     )
-    status = SelectField(
-        "Status",
-        validators=[DataRequired()],
-        choices=[
-            ("in_progress", "In progress"),
-            ("completed", "Completed"),
-        ],
-    )
     job_site_id = SelectField("Job site", coerce=int, validators=[InputRequired()])
 
     def __init__(self, *args, obj: DriveLog | None = None, **kwargs):

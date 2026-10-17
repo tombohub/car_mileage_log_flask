@@ -1,0 +1,9 @@
+{% from 'bootstrap5/form.html' import render_field %}
+
+{{ form.hidden_tag() }}
+
+{{ render_field(form.started_at) }}
+{{ render_field(form.start_km) }}
+{{ render_field(form.end_km) }}
+{{ render_field(form.status) }}
+{{ render_field(form.job_site_id) }}
