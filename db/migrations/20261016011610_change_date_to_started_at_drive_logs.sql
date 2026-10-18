@@ -1,6 +1,6 @@
 -- migrate:up
 
-DROP VIEW public.drive_logs_normalized;
+DROP VIEW IF EXISTS public.drive_logs_normalized;
 
 ALTER TABLE public.drive_logs
 ALTER COLUMN date TYPE timestamp without time zone USING date::timestamp;
@@ -25,4 +25,4 @@ SELECT
     js.name AS job_site_name,
     js.address AS job_site_address
 FROM public.drive_logs d
-LEFT JOIN public.job_sites js ON d.job_site_id = js.id;
+    LEFT JOIN public.job_sites js ON d.job_site_id = js.id;
