@@ -1,0 +1,4 @@
+{% from 'bootstrap5/form.html' import render_field %}
+
+{{ form.hidden_tag() }}
+{{ render_field(form.text, rows=8) }}

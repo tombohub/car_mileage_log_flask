@@ -4,12 +4,15 @@ from typing import Optional
 from sqlalchemy import (
     BigInteger,
     DateTime,
+    FetchedValue,
     ForeignKey,
     Identity,
     Index,
     Integer,
     String,
+    Text,
     UniqueConstraint,
+    func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -60,3 +63,18 @@ class DriveLog(Base):
     )
 
     job_site: Mapped[JobSite] = relationship(back_populates="drive_logs")
+
+
+class Note(Base):
+    __tablename__ = "notes"
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    text: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        server_onupdate=FetchedValue(),
+    )

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Note{% endblock title %}
+
+{% block content %}
+<h1>Note</h1>
+<div class="card">
+    <div class="card-body">
+        <p class="card-text" style="white-space: pre-wrap; overflow-wrap: anywhere;">{{ note.text }}</p>
+        <dl>
+            <dt>Created at</dt>
+            <dd>{{ note.created_at.strftime('%Y-%m-%d %H:%M %Z') }}</dd>
+            <dt>Updated at</dt>
+            <dd>{{ note.updated_at.strftime('%Y-%m-%d %H:%M %Z') }}</dd>
+        </dl>
+        {% include 'notes/_actions.html' %}
+    </div>
+</div>
+<a href="{{ url_for('notes.index') }}" class="btn mt-3 w-100">Back</a>
+{% endblock content %}

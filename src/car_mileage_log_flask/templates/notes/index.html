@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Notes{% endblock title %}
+
+{% block content %}
+<h1>Notes</h1>
+<a class="btn btn-primary w-100" href="{{ url_for('notes.new') }}">Add note</a>
+
+<div class="vstack gap-3 mt-4">
+    {% for note in notes %}
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text" style="white-space: pre-wrap; overflow-wrap: anywhere;">{{ note.text }}</p>
+            <a href="{{ url_for('notes.details', id=note.id) }}" class="card-link">View note</a>
+        </div>
+        <div class="card-footer">
+            {% include 'notes/_actions.html' %}
+        </div>
+    </div>
+    {% else %}
+    <p class="text-body-secondary">No notes yet.</p>
+    {% endfor %}
+</div>
+{% endblock content %}

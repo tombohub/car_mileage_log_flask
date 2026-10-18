@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Add note{% endblock title %}
+
+{% block content %}
+<h1>Add note</h1>
+<form action="{{ url_for('notes.new') }}" method="post">
+    {% include 'notes/_form.html' %}
+    <button type="submit" class="btn btn-primary w-100">Add note</button>
+</form>
+<a href="{{ url_for('notes.index') }}" class="btn btn-secondary mt-3">Back</a>
+{% endblock content %}

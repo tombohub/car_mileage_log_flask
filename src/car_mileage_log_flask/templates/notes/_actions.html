@@ -1,0 +1,8 @@
+<div class="d-flex gap-2">
+    <a href="{{ url_for('notes.edit', id=note.id) }}" class="btn btn-info w-50">Edit</a>
+    <form action="{{ url_for('notes.delete', id=note.id) }}" method="post"
+        onsubmit="return confirm('Delete this note?')" class="w-50">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-danger w-100">Delete</button>
+    </form>
+</div>

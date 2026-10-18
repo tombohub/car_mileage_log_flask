@@ -20,6 +20,7 @@ from pyinstrument import Profiler
 from car_mileage_log_flask.blueprints.auth import auth_bp, login_required
 from car_mileage_log_flask.blueprints.drive_logs import drive_logs_bp
 from car_mileage_log_flask.blueprints.job_sites import job_site_bp
+from car_mileage_log_flask.blueprints.notes import notes_bp
 from car_mileage_log_flask.db.reads import (
     drive_log_select_by_id,
     drive_log_select_earliest_in_progress,
@@ -49,6 +50,7 @@ bootstrap = Bootstrap5(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(job_site_bp)
 app.register_blueprint(drive_logs_bp)
+app.register_blueprint(notes_bp)
 
 
 # ---------------------------------- SIGNALS --------------------------------- #
