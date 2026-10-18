@@ -41,6 +41,10 @@ class DriveLogForm(FlaskForm):
         super().__init__(*args, obj=obj, **kwargs)
         self.current_drive_log = obj
 
+    @property
+    def status(self) -> str:
+        return "completed" if self.end_km.data is not None else "in_progress"
+
     def validate_start_km(self, field):
         stmt = (
             select(DriveLog.end_km)
@@ -52,6 +56,10 @@ class DriveLogForm(FlaskForm):
             .order_by(DriveLog.started_at.desc())
             .limit(1)
         )
+
+        # if editing existing drive log we need to exclude it from validation otherwise it will check against itself and raise error
+        if self.current_drive_log is not None:
+            stmt = stmt.where(DriveLog.id != self.current_drive_log.id)
 
         with Session() as session:
             previous_end_km = session.scalar(stmt)
@@ -67,24 +75,6 @@ class DriveLogForm(FlaskForm):
             and field.data < self.start_km.data
         ):
             raise ValidationError("Ending km must not be lower than starting km")
-
-    def validate_status(self, field):
-        if field.data != "in_progress":
-            return
-
-        stmt = select(DriveLog.id).where(DriveLog.status == "in_progress").limit(1)
-
-        # when we editing current in progress drive we must exclude it from validation otherwise it will always raise error since it thinks there is another drive in progress
-        if self.current_drive_log is not None:
-            stmt = stmt.where(DriveLog.id != self.current_drive_log.id)
-
-        with Session() as session:
-            existing_id = session.scalar(stmt)
-
-            if existing_id is not None:
-                raise ValidationError(
-                    "Another drive is already in progress. Complete it first."
-                )
 
     def validate_started_at(self, field):
         if field.data is None:
@@ -147,7 +137,7 @@ def new():
                 started_at=form.started_at.data,
                 start_km=form.start_km.data,
                 end_km=form.end_km.data,
-                status=form.status.data,
+                status=form.status,
                 job_site_id=form.job_site_id.data,
                 created_at=now,
                 updated_at=now,
@@ -181,6 +171,7 @@ def edit(id: int):
 
         if form.validate_on_submit():
             form.populate_obj(drive_log)
+            drive_log.status = form.status
             drive_log.updated_at = datetime.now(UTC)
 
             session.commit()
